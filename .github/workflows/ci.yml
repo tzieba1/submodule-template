@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    name: Validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check VERSION format
+        run: |
+          if [[ -f VERSION ]]; then
+            version=$(cat VERSION | tr -d '[:space:]')
+            if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+              echo "::error::VERSION must be semver format (e.g., 1.0.0)"
+              exit 1
+            fi
+            echo "Version: $version"
+          fi
+
+      - name: Check template metadata
+        run: |
+          if [[ -f .template-meta.json ]]; then
+            echo "Template: $(jq -r '.template.name' .template-meta.json)"
+            echo "Version: $(jq -r '.template.version' .template-meta.json)"
+          fi
+
+  # Add your project-specific jobs here
+  # test:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - run: npm test

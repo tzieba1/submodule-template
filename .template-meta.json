@@ -1,0 +1,24 @@
+{
+  "$schema": "./schemas/template-meta.schema.json",
+  "template": {
+    "name": "submodule-template",
+    "version": "1.0.0",
+    "description": "Template for repositories that will be used as git submodules",
+    "repository": "git@github.com:GITHUB_ORG/submodule-template.git"
+  },
+  "compatibility": {
+    "orchestrator-template": {
+      "minimum": "1.0.0",
+      "maximum": "1.x.x",
+      "recommended": "1.0.0"
+    }
+  },
+  "versioning": {
+    "strategy": "semver",
+    "tagPrefix": "v",
+    "branches": {
+      "main": "stable releases",
+      "develop": "pre-release versions"
+    }
+  }
+}

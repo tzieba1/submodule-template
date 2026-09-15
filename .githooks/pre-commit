@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+#
+# pre-commit hook for submodule repositories
+#
+# Features:
+# - Validates VERSION file format
+# - Runs project-specific checks
+# - Ensures template compatibility
+#
+
+set -euo pipefail
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+
+echo -e "${BLUE}[pre-commit]${NC} Running submodule checks..."
+
+# Check VERSION file format
+if [[ -f "$REPO_ROOT/VERSION" ]]; then
+    version=$(cat "$REPO_ROOT/VERSION" | tr -d '[:space:]')
+    if ! [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+        echo -e "${YELLOW}Warning: VERSION file should be semver format (e.g., 1.0.0)${NC}"
+    fi
+fi
+
+# Run project-specific pre-commit if exists
+if [[ -f "$REPO_ROOT/.githooks/pre-commit.local" ]]; then
+    source "$REPO_ROOT/.githooks/pre-commit.local"
+fi
+
+echo -e "${GREEN}[pre-commit]${NC} Checks passed"

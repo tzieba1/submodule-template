@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+#
+# commit-msg hook for submodule repositories
+# Enforces conventional commit format
+#
+
+set -euo pipefail
+
+COMMIT_MSG=$(head -1 "$1")
+
+# Skip merge/fixup commits
+[[ "$COMMIT_MSG" =~ ^(Merge|fixup!|squash!) ]] && exit 0
+
+# Conventional commit pattern
+PATTERN="^(feat|fix|docs|style|refactor|test|chore|ci|perf|build|revert)(\([a-zA-Z0-9_-]+\))?: .{1,}"
+
+if ! echo "$COMMIT_MSG" | grep -Eq "$PATTERN"; then
+    echo "Invalid commit message format."
+    echo ""
+    echo "Expected: <type>(<scope>): <description>"
+    echo "Types: feat, fix, docs, style, refactor, test, chore, ci, perf, build"
+    echo ""
+    echo "Your message: $COMMIT_MSG"
+    exit 1
+fi
